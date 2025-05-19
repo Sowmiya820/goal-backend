@@ -22,8 +22,7 @@ const createGoal = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
-
-// Update Goal (Completion, Feedback, Points)
+// Update Goal Status
 const updateGoalStatus = async (req, res) => {
     const { goalId } = req.params;
     const { status, points, feedback } = req.body;
@@ -34,25 +33,43 @@ const updateGoalStatus = async (req, res) => {
             return res.status(404).json({ message: 'Goal not found' });
         }
 
+        // Update basic fields
         goal.status = status || goal.status;
         goal.points = points !== undefined ? points : goal.points;
         goal.feedback = feedback || goal.feedback;
 
+        // ONLY declare and save achievement inside this block
         if (status === 'completed') {
-            goal.completedAt = new Date();
-            goal.user.points += points;
-            await goal.user.save();
+            if (!goal.completedAt) goal.completedAt = new Date();
+
+            const achievement = new Achievement({
+                user: goal.user._id,
+                title: goal.title,
+                description: goal.description,
+                goal: goal.title,
+                category: goal.category,
+                points: points || 0,
+                deadline: goal.deadline,
+                completedAt: goal.completedAt,
+                feedback: feedback || 'Completed goal',
+            });
+
+            await achievement.save();  // SAVE here inside block
+        }
+
+        if (req.body.startedAt) {
+            goal.startedAt = req.body.startedAt;
         }
 
         await goal.save();
+
         res.status(200).json({ message: 'Goal updated successfully', goal });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 };
-
-// Get User's Goals
+// Get User's Goals  <---- THIS WAS MISSING
 const getUserGoals = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -63,7 +80,6 @@ const getUserGoals = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
-
 // DELETE Goal and Move to Achievement
 const deleteGoal = async (req, res) => {
     const { goalId } = req.params;

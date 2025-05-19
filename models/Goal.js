@@ -22,7 +22,7 @@ const goalSchema = new mongoose.Schema({
     feedback: String,
     status: {
         type: String,
-        enum: ['pending', 'in-progress', 'completed'],
+        enum: ['pending', 'ongoing', 'completed'],
         default: 'pending'
     }
 }, {
