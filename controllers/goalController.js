@@ -73,7 +73,8 @@ const updateGoalStatus = async (req, res) => {
 const getUserGoals = async (req, res) => {
     try {
         const userId = req.user.id;
-        const goals = await Goal.find({ user: userId }).populate('user');
+        // Only fetch goals that are NOT deleted
+        const goals = await Goal.find({ user: userId, isDeleted: false }).populate('user');
         res.status(200).json(goals);
     } catch (err) {
         console.error(err);
@@ -94,13 +95,16 @@ const deleteGoal = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        // Move to Achievement
+        // Instead of deleting, set isDeleted to true (soft delete)
+        goal.isDeleted = true;
+
+        // Move to Achievement as before
         const achievement = new Achievement({
             user: goal.user,
             title: goal.title,
             description: goal.description,
-            goal: goal.title, // add goal title
-            category: goal.category, // pass category too
+            goal: goal.title,
+            category: goal.category,
             points: goal.points || 0,
             deadline: goal.deadline,
             completedAt: goal.completedAt || new Date(),
@@ -108,13 +112,16 @@ const deleteGoal = async (req, res) => {
         });
 
         await achievement.save();
-        await goal.deleteOne();
+        await goal.save();  // Save soft delete change instead of deleting the document
 
-        res.status(200).json({ message: 'Goal deleted and added to achievements', achievement });
+        res.status(200).json({ message: 'Goal soft deleted and added to achievements', achievement });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
+
 
 module.exports = { createGoal, updateGoalStatus, getUserGoals, deleteGoal };
