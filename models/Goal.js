@@ -25,10 +25,10 @@ const goalSchema = new mongoose.Schema({
         enum: ['pending', 'ongoing', 'completed'],
         default: 'pending'
     },
-      isDeleted: {     // <--- Add this field for soft delete
-        type: Boolean,
-        default: false
-    }
+    //   isDeleted: {     // <--- Add this field for soft delete
+    //     type: Boolean,
+    //     default: false
+    // }
 }, {
     timestamps: true
 });
