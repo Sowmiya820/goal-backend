@@ -6,40 +6,27 @@ const goalSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    title: {
+    title: String,
+    description: String,
+    category: {
         type: String,
-        required: true,
+        enum: ['Health', 'Career', 'Education', 'Fitness', 'Personal', 'Other'],
+        required: true
     },
-    description: {
-        type: String
+    points: {
+        type: Number,
+        default: 0
     },
+    deadline: Date,
+    completedAt: Date,
+    feedback: String,
     status: {
         type: String,
-        enum: ['pending', 'in-progress', 'completed', 'archived'],  // Added archived status
+        enum: ['pending', 'in-progress', 'completed'],
         default: 'pending'
-    },
-    points: {  // Add points to track goal achievement
-        type: Number,
-        default: 0,
-    },
-    feedback: {  // Feedback to show appreciation for goal achievement
-        type: String,
-    },
-    completedAt: {  // Track completion time
-        type: Date,
-    },
-    deadline: {
-        type: Date,
-        validate: {
-            validator: (value) => !value || value > Date.now(), // Future date validation
-            message: 'Deadline must be a future date'
-        }
     }
 }, {
     timestamps: true
 });
-
-// Optional Index for user field
-goalSchema.index({ user: 1 });
 
 module.exports = mongoose.model('Goal', goalSchema);

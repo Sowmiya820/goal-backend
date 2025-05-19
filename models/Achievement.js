@@ -8,6 +8,8 @@ const achievementSchema = new mongoose.Schema({
     },
     title: String,
     description: String,
+    goal: String, // ✔️ Goal title reference
+    category: String, // ✔️ Add category field
     points: {
         type: Number,
         default: 0

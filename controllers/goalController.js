@@ -1,16 +1,18 @@
 const Goal = require('../models/Goal');
 const User = require('../models/User');
 const Achievement = require('../models/Achievement');
+
 // Create a Goal
 const createGoal = async (req, res) => {
-    const { title, description, deadline } = req.body;
+    const { title, description, deadline, category } = req.body;
 
     try {
         const newGoal = new Goal({
-            user: req.user.id,  // From the authMiddleware
+            user: req.user.id,
             title,
             description,
-            deadline
+            deadline,
+            category
         });
 
         await newGoal.save();
@@ -32,13 +34,12 @@ const updateGoalStatus = async (req, res) => {
             return res.status(404).json({ message: 'Goal not found' });
         }
 
-        goal.status = status;
-        goal.points = points;
-        goal.feedback = feedback;
+        goal.status = status || goal.status;
+        goal.points = points !== undefined ? points : goal.points;
+        goal.feedback = feedback || goal.feedback;
 
         if (status === 'completed') {
-            goal.completedAt = new Date(); // Set completed time
-            // Add points to user's total points
+            goal.completedAt = new Date();
             goal.user.points += points;
             await goal.user.save();
         }
@@ -51,10 +52,10 @@ const updateGoalStatus = async (req, res) => {
     }
 };
 
-// Get User's Goals (Dashboard)
+// Get User's Goals
 const getUserGoals = async (req, res) => {
     try {
-        const userId = req.user.id;  // From authMiddleware
+        const userId = req.user.id;
         const goals = await Goal.find({ user: userId }).populate('user');
         res.status(200).json(goals);
     } catch (err) {
@@ -63,8 +64,7 @@ const getUserGoals = async (req, res) => {
     }
 };
 
-
-// DELETE Goal and MOVE to Achievements
+// DELETE Goal and Move to Achievement
 const deleteGoal = async (req, res) => {
     const { goalId } = req.params;
 
@@ -74,16 +74,17 @@ const deleteGoal = async (req, res) => {
             return res.status(404).json({ message: 'Goal not found' });
         }
 
-        // Ensure goal belongs to the authenticated user
         if (goal.user.toString() !== req.user.id) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        // Move to Achievement collection
+        // Move to Achievement
         const achievement = new Achievement({
             user: goal.user,
             title: goal.title,
             description: goal.description,
+            goal: goal.title, // add goal title
+            category: goal.category, // pass category too
             points: goal.points || 0,
             deadline: goal.deadline,
             completedAt: goal.completedAt || new Date(),

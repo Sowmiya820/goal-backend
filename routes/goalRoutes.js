@@ -11,5 +11,8 @@ router.put('/goals/:goalId', authMiddleware, goalController.updateGoalStatus);
 
 // GET /api/goals (Get All Goals for Logged-in User)
 router.get('/goals', authMiddleware, goalController.getUserGoals);
+// DELETE /api/goals/:goalId (Delete Goal & Move to Achievements)
+router.delete('/goals/:goalId', authMiddleware, goalController.deleteGoal);
+
 
 module.exports = router;
