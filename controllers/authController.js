@@ -4,15 +4,26 @@ const User = require('../models/User');
 const multer = require('multer');
 const path = require('path');
 // Setup multer storage config
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/'); // Make sure 'uploads' folder exists at your project root
+//   },
+//   filename: function (req, file, cb) {
+//     const ext = path.extname(file.originalname);
+//     cb(null, req.user.id + '-' + Date.now() + ext);
+//   }
+// });
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Make sure 'uploads' folder exists at your project root
+    cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
     cb(null, req.user.id + '-' + Date.now() + ext);
   }
 });
+
 
 const upload = multer({ storage });
 // REGISTER User
@@ -125,6 +136,7 @@ const logoutUser = (req, res) => {
 
 
 const updateUser = async (req, res) => {
+      console.log('req.file:', req.file); 
   const { name, email, password } = req.body;
   const profilePicture = req.file; // multer attaches the file here
 
@@ -161,9 +173,10 @@ const updateUser = async (req, res) => {
 
 
 module.exports = {
+    upload,updateUser,
     registerUser,
     loginUser,
     logoutUser,
-    updateUser,
-    upload    // export upload middleware to use in your route
+    
+       // export upload middleware to use in your route
 };

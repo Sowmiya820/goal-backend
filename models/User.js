@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     },
     feedback: {  // Optional: To store any feedback or credits to the user
         type: String,
+    },
+    profilePicture: {
+        type: String,
+        default: '',
     }
 }, {
     timestamps: true
