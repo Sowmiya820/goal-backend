@@ -33,16 +33,23 @@ const updateGoalStatus = async (req, res) => {
             return res.status(404).json({ message: 'Goal not found' });
         }
 
-        // Update basic fields
+        let newAchievement = null;
+
+        // Update fields
         goal.status = status || goal.status;
         goal.points = points !== undefined ? points : goal.points;
         goal.feedback = feedback || goal.feedback;
 
-        // ONLY declare and save achievement inside this block
+        // Handle startedAt
+        if (req.body.startedAt) {
+            goal.startedAt = req.body.startedAt;
+        }
+
+        // If completed, mark as completed and create achievement
         if (status === 'completed') {
             if (!goal.completedAt) goal.completedAt = new Date();
 
-            const achievement = new Achievement({
+            newAchievement = new Achievement({
                 user: goal.user._id,
                 title: goal.title,
                 description: goal.description,
@@ -54,21 +61,22 @@ const updateGoalStatus = async (req, res) => {
                 feedback: feedback || 'Completed goal',
             });
 
-            await achievement.save();  // SAVE here inside block
-        }
-
-        if (req.body.startedAt) {
-            goal.startedAt = req.body.startedAt;
+            await newAchievement.save();
         }
 
         await goal.save();
 
-        res.status(200).json({ message: 'Goal updated successfully', goal });
+        res.status(200).json({
+            message: 'Goal updated successfully',
+            goal,
+            achievement: newAchievement || null,
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 // Get User's Goals  <---- THIS WAS MISSING
 const getUserGoals = async (req, res) => {
     try {
@@ -95,26 +103,17 @@ const deleteGoal = async (req, res) => {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        // Instead of deleting, set isDeleted to true (soft delete)
+        // Soft delete
         goal.isDeleted = true;
+        await goal.save();
 
-        // Move to Achievement as before
-        const achievement = new Achievement({
-            user: goal.user,
-            title: goal.title,
-            description: goal.description,
-            goal: goal.title,
-            category: goal.category,
-            points: goal.points || 0,
-            deadline: goal.deadline,
-            completedAt: goal.completedAt || new Date(),
-            feedback: goal.feedback || "Deleted before completion"
+        // Return updated goals after deletion
+        const updatedGoals = await Goal.find({ user: req.user.id, isDeleted: false });
+
+        res.status(200).json({
+            message: 'Goal soft deleted successfully',
+            updatedGoals
         });
-
-        await achievement.save();
-        await goal.save();  // Save soft delete change instead of deleting the document
-
-        res.status(200).json({ message: 'Goal soft deleted and added to achievements', achievement });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
