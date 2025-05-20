@@ -118,7 +118,7 @@ const updateGoalStatus = async (req, res) => {
 
       await newAchievement.save();
     }
-
+ goal.user.points += points || 0;
     await goal.save();
 
     // Fetch updated achievements list for the user
