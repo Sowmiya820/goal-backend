@@ -2,10 +2,16 @@ const Achievement = require('../models/Achievement');
 
 const getUserAchievements = async (req, res) => {
   try {
-    const userId = req.user?.id;
+    // First try user ID from token
+    let userId = req.user?.id;
+
+    // If no user ID from token, try from URL param
+    if (!userId) {
+      userId = req.params.userId;
+    }
 
     if (!userId) {
-      return res.status(400).json({ message: 'User ID not found in token' });
+      return res.status(400).json({ message: 'User ID not found in token or parameters' });
     }
 
     const achievements = await Achievement.find({ user: userId });

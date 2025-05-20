@@ -6,13 +6,11 @@ const Achievement = require('../models/Achievement');
 
 // Create a Goal
 const createGoal = async (req, res) => {
-    console.log('Decoded user ID:', req.user?.id); // Add this line
-
     const { title, description, deadline, category } = req.body;
 
     try {
         const newGoal = new Goal({
-            user: req.user.id,
+            user: req.user.id, // ✅ Now req.user.id is available
             title,
             description,
             deadline,
