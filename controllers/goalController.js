@@ -118,8 +118,13 @@ const updateGoalStatus = async (req, res) => {
 
       await newAchievement.save();
     }
- goal.user.points += points || 0;
-    await goal.save();
+//  goal.user.points += points || 0;
+const user = await User.findById(goal.user._id);
+  if (user) {
+    user.points = (user.points || 0) + (points || 0);
+    await user.save();
+  }
+await goal.save();
 
     // Fetch updated achievements list for the user
     const updatedAchievements = await Achievement.find({ user: goal.user._id });
