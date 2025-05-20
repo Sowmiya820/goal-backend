@@ -1,19 +1,16 @@
 const Achievement = require('../models/Achievement');
 
 const getUserAchievements = async (req, res) => {
-    try {
-        const userId = req.params.userId;
+  try {
+    const userId = req.user.id; // Extracted from the JWT middleware
 
-        if (!userId) {
-            return res.status(400).json({ message: 'User ID is required' });
-        }
+    const achievements = await Achievement.find({ user: userId });
 
-        const achievements = await Achievement.find({ user: userId });
-        res.status(200).json(achievements);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
-    }
+    res.status(200).json(achievements);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 module.exports = { getUserAchievements };
