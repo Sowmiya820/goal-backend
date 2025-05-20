@@ -6,6 +6,8 @@ const Achievement = require('../models/Achievement');
 
 // Create a Goal
 const createGoal = async (req, res) => {
+    console.log('Decoded user ID:', req.user?.id); // Add this line
+
     const { title, description, deadline, category } = req.body;
 
     try {
@@ -24,6 +26,7 @@ const createGoal = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 //Update Goal Status
 const updateGoalStatus = async (req, res) => {
     const { goalId } = req.params;
