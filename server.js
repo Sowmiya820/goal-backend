@@ -19,7 +19,7 @@ app.use(cors()); // Allow cross-origin requests
 app.use('/api/auth', authRoutes); // Auth routes (login, register)
 app.use('/api', goalRoutes); // Goal-related routes (create, update, view)
 app.use('/api/user', userRoutes); // User profile and feedback routes
-app.use('/api/achievements', achievementRoutes);
+app.use('/api', achievementRoutes);
 // MongoDB connection
 dotenv.config();
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })

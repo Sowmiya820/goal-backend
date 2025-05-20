@@ -3,6 +3,6 @@ const router = express.Router();
 const { getUserAchievements } = require('../controllers/achievementController');
 
 // GET /api/achievements/:userId
-router.get('/', getUserAchievements);
+router.get('/achievements', getUserAchievements);
 
 module.exports = router;
