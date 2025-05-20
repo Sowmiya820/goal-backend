@@ -14,7 +14,8 @@ const app = express();
 // Middleware
 app.use(express.json()); // For parsing application/json
 app.use(cors()); // Allow cross-origin requests
-
+// Serve static files in uploads folder for profile pictures
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Use routes
 app.use('/api/auth', authRoutes); // Auth routes (login, register)
 app.use('/api', goalRoutes); // Goal-related routes (create, update, view)
