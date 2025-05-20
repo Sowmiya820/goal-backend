@@ -52,27 +52,62 @@ const logoutUser = (req, res) => {
 };
 
 // UPDATE User (Name, Email, Password)
+// const updateUser = async (req, res) => {
+//     const { name, email, password } = req.body;
+
+//     try {
+//         const user = await User.findById(req.user.id);
+//         if (!user) return res.status(404).json({ message: 'User not found' });
+
+//         if (name) user.name = name;
+//         if (email) user.email = email;
+//         if (password) {
+//             const salt = await bcrypt.genSalt(10);
+//             user.password = await bcrypt.hash(password, salt);
+//         }
+
+//         await user.save();
+//         res.status(200).json({ message: 'User updated successfully' });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
+
 const updateUser = async (req, res) => {
-    const { name, email, password } = req.body;
+  const { name, email, password, profilePicture } = req.body;
 
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-        if (name) user.name = name;
-        if (email) user.email = email;
-        if (password) {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(password, salt);
-        }
-
-        await user.save();
-        res.status(200).json({ message: 'User updated successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
     }
+    if (profilePicture) user.profilePicture = profilePicture;  // <-- Add this line
+
+    await user.save();
+
+    // Optionally, return updated user data
+    res.status(200).json({
+      message: 'User updated successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        // add any other fields you want to return
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
+
 
 module.exports = {
     registerUser,
