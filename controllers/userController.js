@@ -33,9 +33,26 @@ const updateUserFeedback = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
-const getNotifications = async (req, res) => {
-  const user = await User.findById(req.user.id);
-  res.json(user.notifications.reverse());
-};
 
+// const getNotifications = async (req, res) => {
+//   const user = await User.findById(req.user.id);
+//   res.json(user.notifications.reverse());
+// };
+const getNotifications = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Make sure notifications exists and reverse it
+    const notifications = (user.notifications || []).slice().reverse();
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ message: 'Server error while fetching notifications' });
+  }
+};
 module.exports = { getUserProfile, updateUserFeedback,getNotifications };
