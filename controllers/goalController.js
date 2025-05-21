@@ -275,8 +275,18 @@ const updateGoalStatus = async (req, res) => {
     const user = await User.findById(goal.user._id);
     if (user) {
       user.points = (user.points || 0) + (points || 0);
+
+       // 🔔 Add notification
+  user.notifications.push({
+    message: `🎉 You completed the goal: "${goal.title}"!`,
+    type: 'success',
+    createdAt: new Date(),
+    read: false,
+  });
+
       await user.save();
     }
+
 
     await goal.save();
 

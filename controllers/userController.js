@@ -55,4 +55,20 @@ const getNotifications = async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching notifications' });
   }
 };
-module.exports = { getUserProfile, updateUserFeedback,getNotifications };
+
+const markNotificationsAsRead = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.notifications = user.notifications.map(n => ({ ...n._doc, read: true }));
+    await user.save();
+
+    res.status(200).json({ message: 'All notifications marked as read' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { getUserProfile, updateUserFeedback,getNotifications,markNotificationsAsRead };
