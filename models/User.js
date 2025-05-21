@@ -1,4 +1,16 @@
 const mongoose = require('mongoose');
+const notificationSchema = new mongoose.Schema({
+  message: String,
+  type: String,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  read: {
+    type: Boolean,
+    default: false
+  }
+}, { _id: false }); 
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -25,23 +37,23 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
- notifications: [
-  {
-    message: String,
-    type: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
-    read: {
-      type: Boolean,
-      default: false
-    }
+//  notifications: [
+//   {
+//     message: String,
+//     type: String,
+//     createdAt: {
+//       type: Date,
+//       default: Date.now
+//     },
+//     read: {
+//       type: Boolean,
+//       default: false
+//     }
     
-  }
-]
+//   }
+// ]
 
-
+ notifications: [notificationSchema]  // ✅ use the defined sub-schema
 }, {
     timestamps: true
 });
