@@ -1,4 +1,198 @@
-// 
+// const Goal = require('../models/Goal');
+// const User = require('../models/User');
+// const Achievement = require('../models/Achievement');
+
+
+
+// // Create a Goal
+// const createGoal = async (req, res) => {
+//     const { title, description, deadline, category } = req.body;
+
+//     try {
+//         const newGoal = new Goal({
+//             user: req.user.id, // ✅ Now req.user.id is available
+//             title,
+//             description,
+//             deadline,
+//             category
+//         });
+
+//         await newGoal.save();
+//         res.status(201).json({ message: 'Goal created successfully', goal: newGoal });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
+
+// //Update Goal Status
+// // const updateGoalStatus = async (req, res) => {
+// //     const { goalId } = req.params;
+// //     const { status, points, feedback } = req.body;
+
+// //     try {
+// //         const goal = await Goal.findById(goalId).populate('user');
+// //         if (!goal) {
+// //             return res.status(404).json({ message: 'Goal not found' });
+// //         }
+
+// //         let newAchievement = null;
+
+// //         // Update fields
+// //         goal.status = status || goal.status;
+// //         goal.points = points !== undefined ? points : goal.points;
+// //         goal.feedback = feedback || goal.feedback;
+
+// //         // Handle startedAt
+// //         if (req.body.startedAt) {
+// //             goal.startedAt = req.body.startedAt;
+// //         }
+
+// //         // If completed, mark as completed and create achievement
+// //         if (status === 'completed') {
+// //             if (!goal.completedAt) goal.completedAt = new Date();
+
+// //             newAchievement = new Achievement({
+// //                 user: goal.user._id,
+// //                 title: goal.title,
+// //                 description: goal.description,
+// //                 goal: goal.title,
+// //                 category: goal.category,
+// //                 points: points || 0,
+// //                 deadline: goal.deadline,
+// //                 completedAt: goal.completedAt,
+// //                 feedback: feedback || 'Completed goal',
+// //             });
+
+// //             await newAchievement.save();
+// //         }
+
+// //         await goal.save();
+
+// //         res.status(200).json({
+// //             message: 'Goal updated successfully',
+// //             goal,
+// //             achievement: newAchievement || null,
+// //         });
+// //     } catch (err) {
+// //         console.error(err);
+// //         res.status(500).json({ message: 'Server error' });
+// //     }
+// // };
+
+// const updateGoalStatus = async (req, res) => {
+//   const { goalId } = req.params;
+//   const { status, points, feedback } = req.body;
+
+//   try {
+//     const goal = await Goal.findById(goalId).populate('user');
+//     if (!goal) {
+//       return res.status(404).json({ message: 'Goal not found' });
+//     }
+
+//     let newAchievement = null;
+
+//     // Update fields
+//     goal.status = status || goal.status;
+//     goal.points = points !== undefined ? points : goal.points;
+//     goal.feedback = feedback || goal.feedback;
+
+//     if (req.body.startedAt) {
+//       goal.startedAt = req.body.startedAt;
+//     }
+
+//     if (status === 'completed') {
+//       if (!goal.completedAt) goal.completedAt = new Date();
+
+//       newAchievement = new Achievement({
+//         user: goal.user._id,
+//         title: goal.title,
+//         description: goal.description,
+//         goal: goal.title,
+//         category: goal.category,
+//         points: points || 0,
+//         deadline: goal.deadline,
+//         completedAt: goal.completedAt,
+//         feedback: feedback || 'Completed goal',
+//       });
+
+//       await newAchievement.save();
+//     }
+// //  goal.user.points += points || 0;
+// const user = await User.findById(goal.user._id);
+//   if (user) {
+//     user.points = (user.points || 0) + (points || 0);
+//     await user.save();
+//   }
+// await goal.save();
+
+//     // Fetch updated achievements list for the user
+//     const updatedAchievements = await Achievement.find({ user: goal.user._id });
+
+//     res.status(200).json({
+//       message: 'Goal updated successfully',
+//       goal,
+//       achievement: newAchievement || null,
+//       achievements: updatedAchievements,  // send full updated list here
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+
+// // Get User's Goals  <---- THIS WAS MISSING
+// const getUserGoals = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         // Only fetch goals that are NOT deleted
+//         const goals = await Goal.find({ user: userId, isDeleted: false }).populate('user');
+//         res.status(200).json(goals);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
+// // DELETE Goal and Move to Achievement
+// const deleteGoal = async (req, res) => {
+//     const { goalId } = req.params;
+
+//     try {
+//         const goal = await Goal.findById(goalId);
+//         if (!goal) {
+//             return res.status(404).json({ message: 'Goal not found' });
+//         }
+
+//         if (goal.user.toString() !== req.user.id) {
+//             return res.status(403).json({ message: 'Unauthorized' });
+//         }
+
+//         // Soft delete
+//         goal.isDeleted = true;
+//         await goal.save();
+
+//         // Return updated goals after deletion
+//         const updatedGoals = await Goal.find({ user: req.user.id, isDeleted: false });
+
+//         res.status(200).json({
+//             message: 'Goal soft deleted successfully',
+//             updatedGoals
+//         });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
+
+
+
+
+// module.exports = { createGoal, updateGoalStatus, getUserGoals, deleteGoal };
+
+
+
+
 
 
 
@@ -7,7 +201,9 @@
 const Goal = require('../models/Goal');
 const User = require('../models/User');
 const Achievement = require('../models/Achievement');
+const sendEmail = require('../utils/sendEmail'); // ✅ your email utility
 
+// Create a Goal
 const createGoal = async (req, res) => {
   const { title, description, deadline, category } = req.body;
 
@@ -28,17 +224,20 @@ const createGoal = async (req, res) => {
   }
 };
 
+// Update Goal Status
 const updateGoalStatus = async (req, res) => {
   const { goalId } = req.params;
   const { status, points, feedback } = req.body;
 
   try {
     const goal = await Goal.findById(goalId).populate('user');
-    if (!goal) return res.status(404).json({ message: 'Goal not found' });
+    if (!goal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
 
     let newAchievement = null;
 
-    // Update goal status/fields
+    // Update fields
     goal.status = status || goal.status;
     goal.points = points !== undefined ? points : goal.points;
     goal.feedback = feedback || goal.feedback;
@@ -47,11 +246,9 @@ const updateGoalStatus = async (req, res) => {
       goal.startedAt = req.body.startedAt;
     }
 
-    // Handle goal completion logic
     if (status === 'completed') {
       if (!goal.completedAt) goal.completedAt = new Date();
 
-      // ✅ Create achievement
       newAchievement = new Achievement({
         user: goal.user._id,
         title: goal.title,
@@ -63,35 +260,33 @@ const updateGoalStatus = async (req, res) => {
         completedAt: goal.completedAt,
         feedback: feedback || 'Completed goal',
       });
+
       await newAchievement.save();
 
-      // ✅ Update user's total points
-      const user = await User.findById(goal.user._id);
-      if (user) {
-        user.points = (user.points || 0) + (points || 0);
+      // ✅ Send notification email
+      await sendEmail({
+        to: goal.user.email,
+        subject: '🎯 Goal Completed!',
+        text: `Hi ${goal.user.name},\n\nCongratulations! You've successfully completed your goal: "${goal.title}".\n\nKeep up the great work!\n\n– Goal Tracker Team`
+      });
+    }
 
-        // ✅ Add achievement notification
-        user.notifications.push({
-          message: `🏆 You completed the goal "${goal.title}" and unlocked an achievement!`,
-          type: 'achievement',
-          read: false,
-          createdAt: new Date()
-        });
-
-        await user.save();
-      }
+    // Update user points
+    const user = await User.findById(goal.user._id);
+    if (user) {
+      user.points = (user.points || 0) + (points || 0);
+      await user.save();
     }
 
     await goal.save();
 
-    // Optionally fetch latest achievements (if frontend needs it)
     const updatedAchievements = await Achievement.find({ user: goal.user._id });
 
     res.status(200).json({
       message: 'Goal updated successfully',
       goal,
       achievement: newAchievement || null,
-      achievements: updatedAchievements
+      achievements: updatedAchievements,
     });
   } catch (err) {
     console.error(err);
@@ -99,6 +294,7 @@ const updateGoalStatus = async (req, res) => {
   }
 };
 
+// Get User's Goals
 const getUserGoals = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -110,12 +306,15 @@ const getUserGoals = async (req, res) => {
   }
 };
 
+// DELETE Goal and Move to Achievement
 const deleteGoal = async (req, res) => {
   const { goalId } = req.params;
 
   try {
     const goal = await Goal.findById(goalId);
-    if (!goal) return res.status(404).json({ message: 'Goal not found' });
+    if (!goal) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
 
     if (goal.user.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized' });
