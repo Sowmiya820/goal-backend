@@ -33,5 +33,9 @@ const updateUserFeedback = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+const getNotifications = async (req, res) => {
+  const user = await User.findById(req.user.id);
+  res.json(user.notifications.reverse());
+};
 
-module.exports = { getUserProfile, updateUserFeedback };
+module.exports = { getUserProfile, updateUserFeedback,getNotifications };

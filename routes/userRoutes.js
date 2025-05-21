@@ -8,5 +8,6 @@ router.get('/profile', authMiddleware, userController.getUserProfile);
 
 // PUT /api/user/feedback (Update User's Feedback)
 router.put('/feedback', authMiddleware, userController.updateUserFeedback);
+router.get('/notifications', authMiddleware,userController.getNotifications);
 
 module.exports = router;

@@ -24,7 +24,24 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: '',
+    },
+ notifications: [
+  {
+    message: String,
+    type: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    read: {
+      type: Boolean,
+      default: false
     }
+    
+  }
+]
+
+
 }, {
     timestamps: true
 });

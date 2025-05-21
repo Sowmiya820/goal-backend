@@ -28,7 +28,12 @@ const goalSchema = new mongoose.Schema({
       isDeleted: {     // <--- Add this field for soft delete
         type: Boolean,
         default: false
-    }
+    },
+    notified: {
+  type: Boolean,
+  default: false,
+}
+
 }, {
     timestamps: true
 });
