@@ -10,7 +10,7 @@ const notificationSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-}, { _id: false }); 
+}, { _id: true }); 
 
 const userSchema = new mongoose.Schema({
     name: {
