@@ -9,5 +9,10 @@ router.get('/profile', authMiddleware, userController.getUserProfile);
 // PUT /api/user/feedback (Update User's Feedback)
 router.put('/feedback', authMiddleware, userController.updateUserFeedback);
 router.get('/notifications', authMiddleware,userController.getNotifications);
-router.put('/notifications/read', authMiddleware, userController.markNotificationsAsRead); // optional
+// router.put('/notifications/read', authMiddleware, userController.markNotificationsAsRead); // optional
+router.put('/notifications/:id/read', authMiddleware, userController.markNotificationAsRead);
+router.put('/notifications/read', authMiddleware, userController.markAllNotificationsAsRead);
+
+
+
 module.exports = router;
