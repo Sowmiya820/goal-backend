@@ -56,15 +56,24 @@ const getNotifications = async (req, res) => {
   }
 };
 
-// const markNotificationsAsRead = async (req, res) => {
+
+// const markNotificationAsRead = async (req, res) => {
 //   try {
 //     const user = await User.findById(req.user.id);
 //     if (!user) return res.status(404).json({ message: 'User not found' });
 
-//     user.notifications = user.notifications.map(n => ({ ...n._doc, read: true }));
+//     const notificationId = req.params.id; // notification id from URL param
+
+//     // Find the notification by id and update read status
+//     const notification = user.notifications.id(notificationId);
+//     if (!notification) {
+//       return res.status(404).json({ message: 'Notification not found' });
+//     }
+
+//     notification.read = true; // mark as read
 //     await user.save();
 
-//     res.status(200).json({ message: 'All notifications marked as read' });
+//     res.status(200).json({ message: 'Notification marked as read', notification });
 //   } catch (err) {
 //     console.error(err);
 //     res.status(500).json({ message: 'Server error' });
@@ -76,23 +85,33 @@ const markNotificationAsRead = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const notificationId = req.params.id; // notification id from URL param
+    const notificationId = req.params.id;
+    console.log('Notification ID from request:', notificationId);
 
-    // Find the notification by id and update read status
+    // Optional: check if notifications exist
+    if (!user.notifications || user.notifications.length === 0) {
+      return res.status(404).json({ message: 'No notifications found for user' });
+    }
+
+    // Find the notification by ID
     const notification = user.notifications.id(notificationId);
+
     if (!notification) {
+      console.error('Notification ID not found in user.notifications:', notificationId);
       return res.status(404).json({ message: 'Notification not found' });
     }
 
-    notification.read = true; // mark as read
+    notification.read = true;
     await user.save();
 
     res.status(200).json({ message: 'Notification marked as read', notification });
+
   } catch (err) {
-    console.error(err);
+    console.error('Error marking notification as read:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // Mark all notifications as read
 const markAllNotificationsAsRead = async (req, res) => {
