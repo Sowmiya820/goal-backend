@@ -86,18 +86,10 @@ const markNotificationAsRead = async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const notificationId = req.params.id;
-    console.log('Notification ID from request:', notificationId);
+    console.log('Notification ID from URL:', notificationId);
 
-    // Optional: check if notifications exist
-    if (!user.notifications || user.notifications.length === 0) {
-      return res.status(404).json({ message: 'No notifications found for user' });
-    }
-
-    // Find the notification by ID
     const notification = user.notifications.id(notificationId);
-
     if (!notification) {
-      console.error('Notification ID not found in user.notifications:', notificationId);
       return res.status(404).json({ message: 'Notification not found' });
     }
 
@@ -105,12 +97,12 @@ const markNotificationAsRead = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: 'Notification marked as read', notification });
-
   } catch (err) {
-    console.error('Error marking notification as read:', err);
+    console.error('Error in markNotificationAsRead:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 
 // Mark all notifications as read
