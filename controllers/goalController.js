@@ -264,9 +264,10 @@ const updateGoalStatus = async (req, res) => {
       await newAchievement.save();
 
       // ✅ Send notification email
+      
       await sendEmail({
         to: goal.user.email,
-        subject: '🎯 Goal Completed!',
+        subject: '🎯Goal Completed!🎉',
         text: `Hi ${goal.user.name},\n\nCongratulations! You've successfully completed your goal: "${goal.title}".\n\nKeep up the great work!\n\n– Goal Tracker Team`
       });
     }
