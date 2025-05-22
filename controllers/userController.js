@@ -86,7 +86,7 @@ const markNotificationAsRead = async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const notificationId = req.params.id;
-    console.log('Notification ID from URL:', notificationId);
+    if (!notificationId) return res.status(400).json({ message: 'No notification ID provided' });
 
     const notification = user.notifications.id(notificationId);
     if (!notification) {
@@ -98,10 +98,11 @@ const markNotificationAsRead = async (req, res) => {
 
     res.status(200).json({ message: 'Notification marked as read', notification });
   } catch (err) {
-    console.error('Error in markNotificationAsRead:', err);
+    console.error('Error in backend:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 
 
