@@ -29,3 +29,4 @@ router.delete('/goals/:goalId', authMiddleware, goalController.deleteGoal);
 //   }
 // });
 module.exports = router;
+                                   

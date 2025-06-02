@@ -44,3 +44,4 @@ cron.schedule('* * * * *', async () => {
     console.error('Error while processing reminder notifications:', err);
   }
 });
+
