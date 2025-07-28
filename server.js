@@ -24,6 +24,10 @@ app.use('/api/user', userRoutes); // User profile and feedback routes
 app.use('/api', achievementRoutes);
 
 
+app.get('/', (req, res) => {
+  res.send('API is running...');
+});
+
 // MongoDB connection
 
 dotenv.config();
