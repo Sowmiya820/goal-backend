@@ -98,11 +98,25 @@ const updateUser = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
-    if (profilePicture) {
-      // Upload to Cloudinary
-      const result = await uploadToCloudinary(profilePicture);
-      user.profilePicture = result.secure_url; // Store the Cloudinary URL
-    }
+   if (profilePicture) {
+  // Function to stream upload to Cloudinary
+  const streamUpload = (buffer) => {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "profile_pictures" },
+        (error, result) => {
+          if (result) resolve(result);
+          else reject(error);
+        }
+      );
+      stream.end(buffer);
+    });
+  };
+
+  const result = await streamUpload(profilePicture.buffer);
+  user.profilePicture = result.secure_url; // Store Cloudinary URL
+}
+
 
     await user.save();
 
