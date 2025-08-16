@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const cloudinary = require("../utils/cloudinary"); //
 
 // Get User's Profile
 const getUserProfile = async (req, res) => {
@@ -14,6 +15,33 @@ const getUserProfile = async (req, res) => {
     }
 };
 
+const updateUserProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "profile_pictures",
+      });
+      user.profilePicture = result.secure_url; // ✅ store cloudinary URL
+    }
+
+    await user.save();
+
+    res.json({ message: "Profile updated successfully", user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 // Update User's Feedback (For achievement)
 const updateUserFeedback = async (req, res) => {
     const { feedback } = req.body;
@@ -123,4 +151,4 @@ const markAllNotificationsAsRead = async (req, res) => {
 };
 
 
-module.exports = { getUserProfile, updateUserFeedback,getNotifications,markNotificationAsRead ,markAllNotificationsAsRead};
+module.exports = { getUserProfile,  updateUserProfile,  updateUserFeedback,getNotifications,markNotificationAsRead ,markAllNotificationsAsRead};
